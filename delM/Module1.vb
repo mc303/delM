@@ -71,11 +71,19 @@ Module Module1
 
         If _arguments(1).ToLower = "-path" Then
             Console.WriteLine("Removing folders and files from folder " + _arguments(2))
-            Call RecursivelyDeleteDirectory("\\?\" + _arguments(2))
+            If _arguments(2).Substring(0, 2) = "\\" Then
+                '\\?\UNC\
+                Call RecursivelyDeleteDirectory("\\?\UNC\" + _arguments(2).Substring(2))
+            Else
+                Call RecursivelyDeleteDirectory("\\?\" + _arguments(2))
+            End If
+
         End If
 
-
-        Console.ReadKey()
+        If Not Directory.Exists(_arguments(2)) Then
+            Console.WriteLine("folders and files has been deleted " + _arguments(2))
+        End If
+        ' Console.ReadKey()
     End Sub
 
 
@@ -107,7 +115,7 @@ Module Module1
                     End If
                 Else
                     ' delete this file
-                    If Not DeleteFileW(path) Then
+                    If Not DeleteFile(path) Then
                         isFailed = True
                         Exit Do
                     Else
