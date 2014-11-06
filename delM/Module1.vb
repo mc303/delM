@@ -66,24 +66,36 @@ Module Module1
 
 
     Sub Main()
-
         Dim _arguments As String() = Environment.GetCommandLineArgs()
-
-        If _arguments(1).ToLower = "-path" Then
-            Console.WriteLine("Removing folders and files from folder " + _arguments(2))
-            If _arguments(2).Substring(0, 2) = "\\" Then
-                '\\?\UNC\
-                Call RecursivelyDeleteDirectory("\\?\UNC\" + _arguments(2).Substring(2))
+        If Not _arguments.Length <= 2 Then
+            If _arguments(1).ToLower = "-path" Then
+                If Directory.Exists(_arguments(2)) Then
+                    Console.WriteLine("Removing folders and files from folder " + _arguments(2))
+                    If _arguments(2).Substring(0, 2) = "\\" Then
+                        '\\?\UNC\
+                        Call RecursivelyDeleteDirectory("\\?\UNC\" + _arguments(2).Substring(2))
+                    Else
+                        '"\\?\"    
+                        Call RecursivelyDeleteDirectory("\\?\" + _arguments(2))
+                    End If
+                Else
+                    Console.WriteLine(String.Format("folder not found {0}", _arguments(2)))
+                End If
             Else
-                Call RecursivelyDeleteDirectory("\\?\" + _arguments(2))
+                Console.WriteLine(String.Format("-path missing", _arguments(2)))
             End If
 
-        End If
-
-        If Not Directory.Exists(_arguments(2)) Then
-            Console.WriteLine("folders and files has been deleted " + _arguments(2))
+            If Not Directory.Exists(_arguments(2)) Then
+                Console.WriteLine(String.Format("folders and files has been deleted {0}", _arguments(2)))
+            Else
+                Console.WriteLine(String.Format("damn error :-\ for folder {0}", _arguments(2)))
+            End If
+        Else
+            Console.WriteLine(String.Format("-path is not been specified"))
         End If
         ' Console.ReadKey()
+
+
     End Sub
 
 
